@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psicopedagogia - Agenda tu cita</title>
+<meta name="description" content="Psicopedagogia y tutorias. Agenda tu cita en linea.">
+<style>
+:root{
+  --bg:#fef9f4; --card:#ffffff; --text:#1f2937; --muted:#4b5563; 
+  --primary:#3b82f6; --accent:#22c55e; --highlight:#fbbf24; --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body{background:var(--bg);color:var(--text);}
+.container{max-width:900px;margin:0 auto;padding:20px;}
+header{padding:20px;text-align:center;background:linear-gradient(135deg,var(--primary),#60a5fa);color:white;border-radius:var(--radius);box-shadow:0 4px 15px rgba(0,0,0,0.15);}
+header h1{font-size:2.2rem;margin-bottom:5px;}
+header p{font-size:1rem;opacity:0.9;}
+.card{background:var(--card);padding:20px;border-radius:var(--radius);box-shadow:0 6px 20px rgba(0,0,0,0.1);margin-bottom:20px;transition:transform .2s;}
+.card:hover{transform: translateY(-3px);}
+label{display:block;margin:10px 0 5px;font-weight:600;color:var(--text);}
+input, select, textarea, button{width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid #cbd5e1; font-size:1rem;}
+button{background:var(--accent);color:white;font-weight:600;cursor:pointer;transition:background .2s;}
+button:hover{background:#16a34a;}
+.success{background:var(--highlight);color:var(--text);padding:12px;border-radius:var(--radius);margin-top:10px;text-align:center;font-weight:600;}
+h2{margin-bottom:15px;color:var(--primary);}
+</style>
+</head>
+<body>
+<header>
+  <h1>Psicopedagogia & Tutor?as</h1>
+  <p>Agenda tu cita f?cil y r?pido</p>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Agendar cita</h2>
+    <form id="formCita">
+      <label for="nombre">Nombre del estudiante *</label>
+      <input type="text" id="nombre" required placeholder="Ej. Sofia Ramirez">
+
+      <label for="edad">Edad *</label>
+      <input type="number" id="edad" min="3" max="18" required placeholder="Ej. 7">
+
+      <label for="responsable">Persona responsable *</label>
+      <input type="text" id="responsable" required placeholder="Ej. Madre / Padre">
+
+      <label for="tel">Tel?fono *</label>
+      <input type="tel" id="tel" required placeholder="Ej. 8888-8888">
+
+      <label for="fecha">D?a preferido *</label>
+      <input type="date" id="fecha" required>
+
+      <label for="hora">Hora preferida *</label>
+      <select id="hora" required>
+        <option value="">Selecciona...</option>
+        <option>08:00</option>
+        <option>09:00</option>
+        <option>10:00</option>
+        <option>11:00</option>
+        <option>13:00</option>
+        <option>14:00</option>
+        <option>15:00</option>
+        <option>16:00</option>
+      </select>
+
+      <label for="motivo">Motivo de consulta *</label>
+      <textarea id="motivo" required placeholder="Describe brevemente la situaci?n"></textarea>
+
+      <label><input type="checkbox" id="consent" required> Acepto ser contactado para confirmar la cita</label>
+
+      <button type="submit">Reservar cita</button>
+    </form>
+    <div id="ok" class="success" style="display:none;">?Solicitud registrada! Gracias por usar nuestro formulario.</div>
+  </div>
+
+  <div class="card">
+    <h2>Servicios</h2>
+    <ul style="list-style:none; padding-left:0;">
+      <li style="margin-bottom:10px;">? Evaluaci?n psicopedag?gica: Lectura, atenci?n, memoria y funciones ejecutivas.</li>
+      <li style="margin-bottom:10px;">? Intervenci?n y tutor?as: Planes individualizados y refuerzo escolar.</li>
+      <li style="margin-bottom:10px;">? Orientaci?n a familias: Rutinas, h?bitos de estudio y regulaci?n emocional.</li>
+      <li style="margin-bottom:10px;">? Asesor?a a docentes: Estrategias inclusivas y adecuaciones.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Contacto</h2>
+    <p>Correo: <a href="mailto:contacto@psicopedagogia.cr">contacto@psicopedagogia.cr</a></p>
+    <p>WhatsApp: <a href="https://wa.me/50688888888" target="_blank">Enviar mensaje</a></p>
+  </div>
+</div>
+
+<script>
+// fecha minima = hoy
+const fechaInput = document.getElementById('fecha');
+const hoy = new Date().toISOString().split('T')[0];
+fechaInput.min = hoy;
+
+const form = document.getElementById('formCita');
+const ok = document.getElementById('ok');
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const data = {
+    nombre: document.getElementById('nombre').value,
+    edad: document.getElementById('edad').value,
+    responsable: document.getElementById('responsable').value,
+    tel: document.getElementById('tel').value,
+    fecha: document.getElementById('fecha').value,
+    hora: document.getElementById('hora').value,
+    motivo: document.getElementById('motivo').value
+  };
+  if(!data.nombre || !data.edad || !data.responsable || !data.tel || !data.fecha || !data.hora || !data.motivo || !document.getElementById('consent').checked){
+    alert('Completa todos los campos obligatorios');
+    return;
+  }
+  // guardar en localStorage
+  const arr = JSON.parse(localStorage.getItem('citas_psico') || '[]');
+  arr.push({...data, creado:new Date().toISOString()});
+  localStorage.setItem('citas_psico', JSON.stringify(arr));
+
+  ok.style.display = 'block';
+  form.reset();
+});
+</script>
+</body>
+</html>
